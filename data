@@ -1,0 +1,43 @@
+foreach ($query->result() as $row){
+                $this->db->query("update TB_USUARIOS set dinamico='$token' where id='$row->id' ");
+                $data = array(
+                  'id' => $row->id,
+                  'username'  => $row->nombres,
+                  'token' => $token
+                );
+            }
+
+
+
+            //estado tarea
+                $tarea=$this->input->post('tarea');
+                $estado=$this->DataModel->buscaestadoTarea($tarea);
+                if($estado != 1){
+                    $data['datos']= null;
+                }else{
+                    $servicio=$this->input->post('servicio');
+                    $datos=array(
+                        'idTarea'=>$tarea,
+                        'idServicio'=>$servicio,
+                        'valor' =>$this->DataModel->obtenerValorServicio($servicio)
+                    );
+                    $data['datos']=$this->DataModel->insertaServiciosTarea($datos);
+                }
+
+
+
+
+
+
+$estado=$this->DataModel->buscaestadoTarea($tarea);
+                if($estado != 1){
+                    $data['datos']= null;
+                }else{
+                    $servicio=$this->input->post('servicio');
+                    $datos=array(
+                        'idTarea'=>$tarea,
+                        'idServicio'=>$servicio,
+                        'valor' =>$this->DataModel->obtenerValorServicio($servicio)
+                    );
+                    $data['datos']=$this->DataModel->insertaServiciosTarea($datos);
+                }
