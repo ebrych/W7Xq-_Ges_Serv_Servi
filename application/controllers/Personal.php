@@ -3,18 +3,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Personal extends CI_Controller{
 
+    public $controlador='1';
+
     public function listPersonal(){
         $this->load->model('DataModel');
 		$id = $this->input->post('id');
         $token =$this->input->post('token');
-        $controlador='1';
+
         //cargo-sesion
         $cargo=$this->DataModel->obtenerCargo($id,$token);
         if($cargo==null){
             $data['datos']= null;
         }else{
             //permiso
-            $permiso=$this->DataModel->veryfyPermission($cargo,$controlador);
+            $permiso=$this->DataModel->veryfyPermission($cargo,$this->controlador);
             if($permiso != 0){
                 $data['datos']= $this->DataModel->listaPersonal();
             }else{
@@ -28,14 +30,14 @@ class Personal extends CI_Controller{
         $this->load->model('DataModel');
 		$id = $this->input->post('id');
         $token =$this->input->post('token');
-        $controlador='1';
+
         //cargo-sesion
         $cargo=$this->DataModel->obtenerCargo($id,$token);
         if($cargo==null){
             $data['datos']= null;
         }else{
             //permiso
-            $permiso=$this->DataModel->veryfyPermission($cargo,$controlador);
+            $permiso=$this->DataModel->veryfyPermission($cargo,$this->controlador);
             if($permiso != 0){
                 $nmbrs=$this->input->post('nombre');
                 $crg=$this->input->post('cargo');
@@ -73,14 +75,14 @@ class Personal extends CI_Controller{
         $this->load->model('DataModel');
 		$id = $this->input->post('id');
         $token =$this->input->post('token');
-        $controlador='1';
+ 
         //cargo-sesion
         $cargo=$this->DataModel->obtenerCargo($id,$token);
         if($cargo==null){
             $data['datos']= null;
         }else{
             //permiso
-            $permiso=$this->DataModel->veryfyPermission($cargo,$controlador);
+            $permiso=$this->DataModel->veryfyPermission($cargo,$this->controlador);
             if($permiso != 0){
                 $idUsr =$this->input->post('idUsuario');
                 $data['datos']= $this->DataModel->listaUsuarioById($idUsr);
@@ -95,14 +97,14 @@ class Personal extends CI_Controller{
         $this->load->model('DataModel');
 		$id = $this->input->post('id');
         $token =$this->input->post('token');
-        $controlador='1';
+ 
         //cargo-sesion
         $cargo=$this->DataModel->obtenerCargo($id,$token);
         if($cargo==null){
             $data['datos']= null;
         }else{
             //permiso
-            $permiso=$this->DataModel->veryfyPermission($cargo,$controlador);
+            $permiso=$this->DataModel->veryfyPermission($cargo,$this->controlador);
             if($permiso != 0){
                 $idUsr =$this->input->post('idUsuario');
                 $datos=array(
@@ -114,6 +116,32 @@ class Personal extends CI_Controller{
                     'estado' =>  $this->input->post('estado')
                 );
                 $data['datos']= $this->DataModel->actualizaUsuario($idUsr,$datos);
+            }else{
+                $data['datos']= null;
+            }
+        }
+        $this->load->view('index',$data);
+    }
+
+    public function ObtenerQr(){
+        $this->load->model('DataModel');
+		$id = $this->input->post('id');
+        $token =$this->input->post('token');
+
+        //cargo-sesion
+        $cargo=$this->DataModel->obtenerCargo($id,$token);
+        if($cargo==null){
+            $data['datos']= null;
+        }else{
+            //permiso
+            $permiso=$this->DataModel->veryfyPermission($cargo,$this->controlador);
+            if($permiso != 0){
+                $idUsr =$this->input->post('idUsuario');
+                $codeQr=$this->encrypt->encode("qrt-"+$idUsr);
+                $data=array(
+                    'code' => $codeQr
+                );
+                $data['datos']= $data;
             }else{
                 $data['datos']= null;
             }
