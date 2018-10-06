@@ -39,7 +39,10 @@ class Asistencia extends CI_Controller{
             $permiso=$this->DataModel->veryfyPermission($cargo,$this->controlador);
             if($permiso != 0){
                 $date=$this->input->post('date');
-                $busca=$this->DataModel->buscaAsistencia($id,$date);
+                $encript=$this->input->post('user');
+                $uncript=$this->encrypt->decode($encript);
+                $user=EXPLODE("-",$uncript);
+                $busca=$this->DataModel->buscaAsistencia($id,$user[1]);
                 if($busca==0){
                     //agrega asistencia
                     $data=array(
