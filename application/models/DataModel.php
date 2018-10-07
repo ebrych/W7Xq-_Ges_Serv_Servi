@@ -390,6 +390,8 @@ class DataModel extends CI_Model
         return $this->db->update('TB_TAREAS',$datos);
     }
 
+    //servicios
+
     public function insertaServiciosTarea($datos){
         $query = $this->db->insert('TB_TAREA_SERVICIO',$datos);
         if ($this->db->affected_rows() > 0)
@@ -530,10 +532,6 @@ class DataModel extends CI_Model
 
     
 
-
-
-
-
     //Servicios
 
     public function listaTipoPrecio(){
@@ -653,14 +651,42 @@ class DataModel extends CI_Model
         return $this->db->update('TB_ASISTENCIAS',$datos);
     }
 
-    
+    //reportes
+    public function listaTrabajadorReporte($mes){
+        $query = $this->db->query("SELECT usr.id, usr.nombres as 'usuario', lc.nombres as 'local' 
+                                    FROM TB_USUARIOS usr
+                                    INNER JOIN TB_LOCALES lc ON lc.id=usr.idLocal
+                                    WHERE usr.id > 1  ");
+        foreach ($query->result() as $row){
+            $data=array(
+                'usuario' => $row->usuario,
+                'local'=> $row->local,
+                'actividad'=>$this->reporteActividadTrabajador($row->id,$mes);
+            );
+        }
+        
+    }
+    public function reporteActividadTrabajador($idUser,$mes){
+        $query = $this->db->query("SELECT count(*) as 'result' FROM TB_USUARIO_TAREA usTr
+                                    INNER JOIN TB_TAREA tr ON tr.id=usTr.idTarea
+                                    WHERE usTr.idUsuario='$idUser' AND MONTH(tr.fecha) ='$mes' ");
+        $rslt = $query->result();
+        return $rslt[0]->result;
+    }
 
     
 
-    
-
-
-
+    /*
+    foreach ($query->result() as $row){
+                $this->db->query("update TB_USUARIOS set dinamico='$token' where id='$row->id' ");
+                $data = array(
+                  'id' => $row->id,
+                  'username'  => $row->nombres,
+                  'token' => $token
+                );
+            }
+            return $data;
+    */
 
 
 
