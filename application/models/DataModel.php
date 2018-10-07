@@ -661,7 +661,7 @@ class DataModel extends CI_Model
             $data=array(
                 'usuario' => $row->usuario,
                 'local'=> $row->local,
-                'actividad'=>$this->reporteActividadTrabajador($row->id,$mes);
+                'actividad'=>$this->reporteActividadTrabajador($row->id,$mes)
             );
         }
         
