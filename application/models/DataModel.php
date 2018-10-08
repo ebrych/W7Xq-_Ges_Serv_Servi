@@ -653,7 +653,14 @@ class DataModel extends CI_Model
 
     //asistencia
     public function listarAsistenciadelDia($fecha){
-        $query = $this->db->query(" SELECT us.nombres ,asis.fecha,asis.entrada,asis.salida FROM TB_ASISTENCIAS as asis INNER JOIN TB_USUARIOS us ON asis.idUsuario = us.id WHERE asis.fecha='$fecha' ");
+        $query = $this->db->query(" SELECT us.nombres,cr.descripcion as 'cargo',
+                                            lc.nombres as 'local',
+                                            asis.fecha, asis.entrada, asis.salida 
+                                    FROM TB_ASISTENCIAS as asis 
+                                    INNER JOIN TB_USUARIOS us ON asis.idUsuario = us.id
+                                    INNER JOIN TB_LOCALES lc ON lc.id=us.idLocal
+                                    INNER JOIN TB_CARGOS cr ON us.idCargo=cr.id 
+                                    WHERE asis.fecha='$fecha' ");
         if($query->num_rows() == 0){
         return null;
         }else{
