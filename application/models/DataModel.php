@@ -275,6 +275,38 @@ class DataModel extends CI_Model
         }
     }
 
+    public function listaPersonalByLocal($local){
+        $query = $this->db->query("SELECT u.id,u.nombres,c.descripcion as 'cargo'
+                                    FROM TB_USUARIOS u 
+                                    INNER JOIN TB_CARGOS c on u.idCargo=c.id 
+                                    INNER JOIN TB_LOCALES l on u.idLocal=l.id
+                                    WHERE u.idLocal='$local' AND u.id > 1");
+        $result =[];
+        $hoy=date("Y-m-d");
+        foreach ($query->result() as $row){
+            $datos = array(
+                'id' => $row->id,
+                'nombres'  => $row->nombres,
+                'cargo' => $row->cargo,
+                'reporte'=>$this->minRepoAsistencia($row->id,$hoy)
+            );
+            array_push($result,$datos);
+        return $result;
+        }
+    }
+
+    public function minRepoAsistencia($id,$date){
+        $respuesta="";
+        $query = $this->db->query("SELECT count(*) as 'result' FROM TB_ASISTENCIAS WHERE idUsuario='$id' AND fecha='$date' ");
+        $rslt = $query->result();
+        if($rslt[0]->result==0){
+            $respuesta="Inasistencia";
+        }else{
+            $respuesta="Asistencia";
+        }
+        return $respuesta;
+    }
+
     public function listaUsuarioById($id){
         $query = $this->db->query("SELECT u.id,u.nombres,u.idCargo,c.descripcion,u.idLocal,l.nombres as 'local',
                                           u.email,u.telefono,u.estado as 'idEstado',
@@ -645,7 +677,7 @@ class DataModel extends CI_Model
         }
     }
 
-    public function actualizaAsistencia($idUser,$date,$datos){
+    public function actualizaAsistencia($idUser,$date,$datos){      
         $this->db->where('idUsuario',$idUser);
         $this->db->where('fecha',$date);
         return $this->db->update('TB_ASISTENCIAS',$datos);

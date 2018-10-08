@@ -121,36 +121,7 @@ class Personal extends CI_Controller{
             }
         }
         $this->load->view('index',$data);
-    }
-
-    public function ObtenerQr(){
-        $this->load->model('DataModel');
-		$id = $this->input->post('id');
-        $token =$this->input->post('token');
-        
-        //cargo-sesion
-        $cargo=$this->DataModel->obtenerCargo($id,$token);
-        if($cargo==null){
-            $data['datos']= null;
-        }else{
-            //permiso
-            $permiso=$this->DataModel->veryfyPermission($cargo,$this->controlador);
-            if($permiso != 0){
-                $idUsr =$this->input->post('idUsuario');
-                $codeQr=$this->DataModel->generatePass(6)."-".$idUsr."-".$this->DataModel->generatePass(3);
-                $data=array(
-                    'code' => $codeQr
-                );
-                $data['datos']= $data;
-            }else{
-                $data['datos']= null;
-            }
-        }
-        $this->load->view('index',$data);
-        
-    }
-
-    
+    } 
 
 
 }

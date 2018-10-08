@@ -26,44 +26,5 @@ class Asistencia extends CI_Controller{
         $this->load->view('index',$data);
     }
 
-    public function agregarAsistencia(){
-        $this->load->model('DataModel');
-		$id = $this->input->post('id');
-        $token =$this->input->post('token');
-        //cargo-sesion
-        $cargo=$this->DataModel->obtenerCargo($id,$token);
-        if($cargo==null){
-            $data['datos']= null;
-        }else{
-            //permiso
-            $permiso=$this->DataModel->veryfyPermission($cargo,$this->controlador);
-            if($permiso != 0){
-                $date=$this->input->post('date');
-                $encript=$this->input->post('user');
-                $uncript=$this->encrypt->decode($encript);
-                $user=EXPLODE("-",$uncript);
-                $busca=$this->DataModel->buscaAsistencia($id,$user[1]);
-                if($busca==0){
-                    //agrega asistencia
-                    $data=array(
-                        'idUsuario'=> $id,
-                        'fecha'=> date("Y-m-d"),
-                        'entrada'=>date("H:i:s")
-                    );
-                    $this->DataModel->registrarAsistencia($data);
-                }else{
-                    //update asistencia
-                    $data=array(
-                        'salida'=>date("H:i:s")
-                    );
-                    $this->DataModel->actualizaAsistencia($id,date("Y-m-d"),$data);
-                }
-            }else{
-                $data['datos']= null;
-            }
-        }
-        $this->load->view('index',$data);
-    }
-
 
 }
