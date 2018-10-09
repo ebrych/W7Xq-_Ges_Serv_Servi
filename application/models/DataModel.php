@@ -692,26 +692,76 @@ class DataModel extends CI_Model
 
     //reportes
     public function listaTrabajadorReporte($mes){
-        $query = $this->db->query("SELECT usr.id, usr.nombres as 'usuario', lc.nombres as 'local' 
+        $result=[];
+        $query = $this->db->query("SELECT usr.id, usr.nombres as 'usuario', lc.nombres as 'local',
+                                    cr.descripcion as 'cargo' 
                                     FROM TB_USUARIOS usr
                                     INNER JOIN TB_LOCALES lc ON lc.id=usr.idLocal
+                                    INNER JOIN TB_CARGOS cr ON cr.id=usr.idCargo
                                     WHERE usr.id > 1  ");
         foreach ($query->result() as $row){
             $data=array(
                 'usuario' => $row->usuario,
                 'local'=> $row->local,
+                'cargo'=>$row->cargo,
                 'actividad'=>$this->reporteActividadTrabajador($row->id,$mes)
             );
+            array_push($result,$data);
         }
-        
+        return $result;
     }
     public function reporteActividadTrabajador($idUser,$mes){
         $query = $this->db->query("SELECT count(*) as 'result' FROM TB_USUARIO_TAREA usTr
-                                    INNER JOIN TB_TAREA tr ON tr.id=usTr.idTarea
-                                    WHERE usTr.idUsuario='$idUser' AND MONTH(tr.fecha) ='$mes' ");
+                                    INNER JOIN TB_TAREAS tr ON tr.id=usTr.idTarea
+                                    WHERE usTr.idUsuario='$idUser' 
+                                    AND MONTH(tr.fecha) ='$mes'
+                                    AND tr.estado='2' ");
         $rslt = $query->result();
         return $rslt[0]->result;
     }
+    public function listaLocalesReporte($mes){
+        $result=[];
+        $query = $this->db->query(" SELECT lc.id,lc.nombres,lc.direccion 
+                                    FROM TB_LOCALES lc 
+                                    WHERE estado = 1 ");
+        foreach ($query->result() as $row){
+            $data=array(
+                'id' => $row->id,
+                'nombre'=> $row->nombres,
+                'direccion'=>$row->direccion,
+                'actividad'=>$this->reporteActividadLocal($row->id,$mes)
+            );
+            array_push($result,$data);
+        }
+        return $result;
+    }
+    public function reporteActividadLocal($idLocal,$mes){
+        $query = $this->db->query("SELECT count(*) as 'result' FROM TB_TAREAS tr 
+                                    WHERE idLocal='$idLocal' AND tr.estado='2' 
+                                    AND MONTH(tr.fecha)='$mes' ");
+        $rslt = $query->result();
+        return $rslt[0]->result;
+    }
+
+    //reservas
+    public function listarReservas(){
+        $query = $this->db->query(" SELECT rs.id,cl.nombres,cl.email,cl.telefono,lc.nombres as 'local',
+                                    rs.fechaAtencion,rs.horaAtencion,fechaRegistro 
+                                    FROM TB_RESERVAS rs 
+                                    INNER JOIN TB_CLIENTES cl on rs.idCliente=cl.id 
+                                    INNER JOIN TB_LOCALES lc ON lc.id=rs.idLocal 
+                                    WHERE rs.estado=1 ");
+        if($query->num_rows() == 0){
+        return null;
+        }else{
+        return $query->result();
+        }
+    }
+
+
+
+
+   
 
     
 

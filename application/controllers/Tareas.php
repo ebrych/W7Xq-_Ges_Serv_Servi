@@ -43,6 +43,7 @@ class Tareas extends CI_Controller {
                     'idLocal' => $this->DataModel->obtenerLocal($id),
                     'idCliente' => $this->input->post('cliente'),
                     'fecha' => $this->input->post('fecha'),
+                    'hora' => $this->input->post('hora'),
                     'estado' => $this->input->post('estado')
                 );
                 $data['datos']=$this->DataModel->insertaTarea($datos);
