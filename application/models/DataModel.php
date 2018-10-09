@@ -757,6 +757,15 @@ class DataModel extends CI_Model
         return $query->result();
         }
     }
+    public function agregarReserva(){
+        $query = $this->db->insert('TB_RESERVAS',$datos);
+        if ($this->db->affected_rows() > 0)
+        {
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
 
 
 
