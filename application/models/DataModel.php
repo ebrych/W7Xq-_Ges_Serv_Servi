@@ -8,7 +8,7 @@ class DataModel extends CI_Model
     }
 
 
-    //Saludo de Bienvenida - Home!
+    //Saludo de Bienvenida -- Home!
     public function saludo(){
         $data = array(
             'titulo'=> 'Saludo',
