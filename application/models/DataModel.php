@@ -11,8 +11,9 @@ class DataModel extends CI_Model
     //Saludo de Bienvenida -- Home!
     public function saludo(){
         $data = array(
-            'titulo'=> 'Saludo',
-            'mensaje'=> 'Hola mundo'
+            'titulo'=> 'WebService',
+            'mensaje'=> 'Gestión de servicios'
+            'fecha' => date("Y-m-d H:i:s")
         );
         return $data;
     }
