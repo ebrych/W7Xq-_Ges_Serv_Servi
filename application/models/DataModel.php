@@ -801,7 +801,7 @@ class DataModel extends CI_Model
     }
 
     public function aceptaReserva($id){
-        //inserta cabecera
+        //inserta cabecera(reserva a tarea)
         $query = $this->db->query(" SELECT rs.idLocal as 'local',rs.idCliente as 'cliente', rs.fechaAtencion,
                                     rs.horaAtencion  
                                     FROM TB_RESERVAS rs 
@@ -816,6 +816,7 @@ class DataModel extends CI_Model
             
         }
         $this->insertaTarea($cabecera);
+        //busca idTarea
         $idTarea=$this->buscaTarea($cabecera->fecha,$cabecera->hora,$cabecera->idLoca,$cabecera->idCliente);
         //inserta servicios
         $query = $this->db->query(" SELECT idServicio FROM TB_SERVICIO_RESERVA WHERE idReserva='$id' ");
