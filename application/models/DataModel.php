@@ -376,6 +376,12 @@ class DataModel extends CI_Model
         return $this->db->update('TB_CLIENTES',$datos);
     }
 
+    public function existeCliente($mail){
+        $query = $this->db->query("SELECT count(*) as 'result' FROM TB_CLIENTES WHERE email='$mail' ");
+        $rslt = $query->result();
+        return $rslt[0]->result;
+    }
+
     //Tareas
     public function listarTareas($date){
         $query = $this->db->query("SELECT trs.id,lcl.nombres as 'local',cl.nombres as 'cliente',
@@ -420,6 +426,17 @@ class DataModel extends CI_Model
     public function updateTarea($id,$datos){
         $this->db->where('id',$id);
         return $this->db->update('TB_TAREAS',$datos);
+    }
+
+    public function buscaTarea($fecha,$hora,$local,$cliente){
+        $estado=0;
+        $query = $this->db->query("SELECT id FROM TB_TAREAS WHERE idLocal='$local' AND idCliente='$cliente' AND fecha='$fecha' AND hora='$hora'  ");
+        if($query->num_rows() == 0){
+            return null;
+        }else{
+            $estado= $query->result();
+            return $estado[0]->id;
+        } 
     }
 
     //servicios
@@ -757,6 +774,7 @@ class DataModel extends CI_Model
         return $query->result();
         }
     }
+
     public function agregarReserva(){
         $query = $this->db->insert('TB_RESERVAS',$datos);
         if ($this->db->affected_rows() > 0)
@@ -767,9 +785,74 @@ class DataModel extends CI_Model
         }
     }
 
+    public function agregaServiciosReseva(){
+        $query = $this->db->insert('TB_SERVICIO_RESERVA',$datos);
+        if ($this->db->affected_rows() > 0)
+        {
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
+
+    public function updateReserva($id,$data){
+        $this->db->where('id',$id);
+        return $this->db->update('TB_RESERVAS',$data);
+    }
+
+    public function aceptaReserva($id){
+        //inserta cabecera
+        $query = $this->db->query(" SELECT rs.idLocal as 'local',rs.idCliente as 'cliente', rs.fechaAtencion,
+                                    rs.horaAtencion  
+                                    FROM TB_RESERVAS rs 
+                                    WHERE rs.id='$id' AND estado = 1");
+        foreach ($query->result() as $row){
+            $cabecera=array(
+                'idLoca'=>$row->local,
+                'idCliente'=>$row->cliente,
+                'fecha'=>$row->fechaAtencion,
+                'hora'=>$row->horaAtencion
+            );
+            
+        }
+        $this->insertaTarea($cabecera);
+        $idTarea=$this->buscaTarea($cabecera->fecha,$cabecera->hora,$cabecera->idLoca,$cabecera->idCliente);
+        //inserta servicios
+        $query = $this->db->query(" SELECT idServicio FROM TB_SERVICIO_RESERVA WHERE idReserva='$id' ");
+        foreach ($query->result() as $row){
+            $data=array(
+                'idServicio'=>$row->idServicio,
+                'idTarea'=>$idTarea,
+                'valor' =>$this->obtenerValorServicio($row->idServicio)
+            );
+            $this->insertaServiciosTarea($data);
+        }
+        //actualiza reserva
+        $estRes=array(
+            'estado'=>'2'
+        );
+        $this->updateReserva($id,$estRes);
+        return true;
+    }
 
 
 
+    /*
+    $result=[];
+        $query = $this->db->query(" SELECT lc.id,lc.nombres,lc.direccion 
+                                    FROM TB_LOCALES lc 
+                                    WHERE estado = 1 ");
+        foreach ($query->result() as $row){
+            $data=array(
+                'id' => $row->id,
+                'nombre'=> $row->nombres,
+                'direccion'=>$row->direccion,
+                'actividad'=>$this->reporteActividadLocal($row->id,$mes)
+            );
+            array_push($result,$data);
+        }
+        return $result;
+    */
    
 
     
