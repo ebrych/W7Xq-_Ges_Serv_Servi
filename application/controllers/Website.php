@@ -68,7 +68,7 @@ class Website extends CI_Controller{
      }
      
      public function actualizaInfoWeb(){
-     $this->load->model('DataModel');
+        $this->load->model('DataModel');
         $id = $this->input->post('id');
         $token =$this->input->post('token');
         $controlador='2';
@@ -114,7 +114,31 @@ class Website extends CI_Controller{
         $this->load->view('index',$data);
      }
      
-     
+     public function actualizaContacto(){
+        $this->load->model('DataModel');
+        $id = $this->input->post('id');
+        $token =$this->input->post('token');
+        $controlador='2';
+        $cargo=$this->DataModel->obtenerCargo($id,$token);
+        if($cargo==null){
+            $data['datos']= null;
+        }else{
+            //permiso
+            $permiso=$this->DataModel->veryfyPermission($cargo,$this->controlador);
+            if($permiso != 0){
+                $id='1';
+                $datos=array(
+                    'numero' => $this->input->post('numero'),
+                    'mail' => $this->input->post('mail'),
+                    'facebook  ' =>  $this->input->post('facebook')
+                );
+                $data['datos']=$this->DataModel->updateContactoWeb($id,$datos);
+            }else{
+                $data['datos']= null;
+            }
+        }
+        $this->load->view('index',$data);
+     }
      
      
      
