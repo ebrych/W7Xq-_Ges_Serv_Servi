@@ -840,7 +840,37 @@ class DataModel extends CI_Model
             return $e;
         }
     }
-
+    
+    //web
+    public function infoWeb(){
+        $query = $this->db->query(" SELECT id,titulo,descripcion,orden FROM TB_WEB_INFO ORDER BY orden ");
+        return $query->result(); 
+    }
+    
+    public function agregarInfoWeb(){
+        $query = $this->db->insert('TB_WEB_INFO',$datos);
+        if ($this->db->affected_rows() > 0)
+        {
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
+    
+    public function inforWebById($id){
+        $query = $this->db->query(" SELECT id,titulo,descripcion,orden FROM TB_WEB_INFO WHERE id='$id' ");
+        return $query->result(); 
+    }
+    
+    public function  updateInfoWeb($id,$datos){
+        $this->db->where('id',$id);
+        return $this->db->update('TB_WEB_INFO',$datos);
+    }
+    
+    public function deleteInfoWeb($id){
+        $this->db->where('id', $id);
+        $this->db->delete('TB_WEB_INFO');
+    }
 
 
     /*
