@@ -871,7 +871,16 @@ class DataModel extends CI_Model
         $this->db->where('id', $id);
         $this->db->delete('TB_WEB_INFO');
     }
-
+    
+    public function contactoWeb($id){
+        $query = $this->db->query(" SELECT numero,mail,facebook FROM TB_WEB_CONTACTO WHERE id='$id' ");
+        return $query->result(); 
+    }
+    
+    public function  updateContactoWeb($id,$datos){
+        $this->db->where('id',$id);
+        return $this->db->update('TB_WEB_CONTACTO',$datos);
+    }
 
     /*
     $result=[];
