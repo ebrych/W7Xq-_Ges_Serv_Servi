@@ -12,7 +12,7 @@ class DataModel extends CI_Model
     public function saludo(){
         $data = array(
             'titulo'=> 'WebService',
-            'mensaje'=> 'Gestión de servicios'
+            'mensaje'=> 'Gestión de servicios',
             'fecha' => date("Y-m-d H:i:s")
         );
         return $data;
@@ -431,12 +431,12 @@ class DataModel extends CI_Model
 
     public function buscaTarea($fecha,$hora,$local,$cliente){
         $estado=0;
-        $query = $this->db->query("SELECT id FROM TB_TAREAS WHERE idLocal='$local' AND idCliente='$cliente' AND fecha='$fecha' AND hora='$hora'  ");
+        $query = $this->db->query("SELECT id as 'result' FROM TB_TAREAS WHERE idLocal='$local' AND idCliente='$cliente' AND fecha='$fecha' AND hora='$hora'  ");
         if($query->num_rows() == 0){
             return null;
         }else{
             $estado= $query->result();
-            return $estado[0]->id;
+            return $estado[0]->result;
         } 
     }
 
@@ -802,39 +802,43 @@ class DataModel extends CI_Model
     }
 
     public function aceptaReserva($id){
-        //inserta cabecera(reserva a tarea)
-        $query = $this->db->query(" SELECT rs.idLocal as 'local',rs.idCliente as 'cliente', rs.fechaAtencion,
-                                    rs.horaAtencion  
-                                    FROM TB_RESERVAS rs 
-                                    WHERE rs.id='$id' AND estado = 1");
-        foreach ($query->result() as $row){
-            $cabecera=array(
-                'idLoca'=>$row->local,
+        try {
+            //inserta cabecera(reserva a tarea)
+            $query = $this->db->query(" SELECT rs.idLocal as 'local',rs.idCliente as 'cliente', rs.fechaAtencion,
+                                        rs.horaAtencion  
+                                        FROM TB_RESERVAS rs 
+                                        WHERE rs.id='$id' AND estado = 1");
+            foreach ($query->result() as $row){
+                $cabecera=array(
+                'idLocal'=>$row->local,
                 'idCliente'=>$row->cliente,
                 'fecha'=>$row->fechaAtencion,
                 'hora'=>$row->horaAtencion
-            );
+                );    
+            }
+            $this->insertaTarea($cabecera);
+            //busca idTarea
+            $idTarea=$this->buscaTarea($cabecera['fecha'],$cabecera['hora'],$cabecera['idLocal'],$cabecera['idCliente']);
             
-        }
-        $this->insertaTarea($cabecera);
-        //busca idTarea
-        $idTarea=$this->buscaTarea($cabecera->fecha,$cabecera->hora,$cabecera->idLoca,$cabecera->idCliente);
-        //inserta servicios
-        $query = $this->db->query(" SELECT idServicio FROM TB_SERVICIO_RESERVA WHERE idReserva='$id' ");
-        foreach ($query->result() as $row){
+            //inserta servicios
+            $query = $this->db->query(" SELECT idServicio FROM TB_SERVICIO_RESERVA WHERE idReserva='$id' ");
+            foreach ($query->result() as $row){
             $data=array(
-                'idServicio'=>$row->idServicio,
-                'idTarea'=>$idTarea,
-                'valor' =>$this->obtenerValorServicio($row->idServicio)
+            'idServicio'=>$row->idServicio,
+            'idTarea'=>$idTarea,
+            'valor' =>$this->obtenerValorServicio($row->idServicio)
             );
             $this->insertaServiciosTarea($data);
-        }
-        //actualiza reserva
-        $estRes=array(
+            }
+            //actualiza reserva
+            $estRes=array(
             'estado'=>'2'
-        );
-        $this->updateReserva($id,$estRes);
-        return true;
+            );
+            $this->updateReserva($id,$estRes);
+            return true;
+        }catch(Exception $e){
+            return $e;
+        }
     }
 
 

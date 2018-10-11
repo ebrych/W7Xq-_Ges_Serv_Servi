@@ -41,7 +41,7 @@ class Reservas extends CI_Controller{
             if($permiso != 0){
                 //confirma
                 $idReserva=$this->input->post('reserva');
-		return $data['datos']= $this->DataModel->aceptaReserva($idReserva);
+		        $data['datos']= $this->DataModel->aceptaReserva($idReserva);
             }else{
                 $data['datos']= null;
             }
@@ -64,10 +64,10 @@ class Reservas extends CI_Controller{
             if($permiso != 0){
                 //cancela
                 $idReserva=$this->input->post('reserva');
-		$data=array(
-			'estado' => '0'
-		);
-		return $this->DataModel->updateReserva($idReserva,$data)
+                $data=array(
+                    'estado' => 0
+                );
+                return $this->DataModel->updateReserva($idReserva,$data);
             }else{
                 $data['datos']= null;
             }
