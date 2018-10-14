@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Website extends CI_Controller{
      
-     public $controlador='xx';
+     public $controlador='13';
      
      public function getData(){
           $this->load->model('DataModel');
@@ -16,7 +16,7 @@ class Website extends CI_Controller{
      }
      public function getContacto(){
           $this->load->model('DataModel');
-          $data['datos']= $this->DataModel->contactoWeb();
+          $data['datos']= $this->DataModel->contactoWeb(1);
           $this->load->view('index',$data);
      }
      

@@ -858,7 +858,7 @@ class DataModel extends CI_Model
     }
     
     public function inforWebById($id){
-        $query = $this->db->query(" SELECT id,titulo,descripcion,orden FROM TB_WEB_INFO WHERE id='$id' ");
+        $query = $this->db->query(" SELECT id,titulo,descripcion,orden FROM TB_WEB_INFO WHERE id='$id' ORDER BY orden ");
         return $query->result(); 
     }
     
