@@ -847,7 +847,7 @@ class DataModel extends CI_Model
         return $query->result(); 
     }
     
-    public function agregarInfoWeb(){
+    public function agregarInfoWeb($datos){
         $query = $this->db->insert('TB_WEB_INFO',$datos);
         if ($this->db->affected_rows() > 0)
         {
@@ -858,7 +858,7 @@ class DataModel extends CI_Model
     }
     
     public function inforWebById($id){
-        $query = $this->db->query(" SELECT id,titulo,descripcion,orden FROM TB_WEB_INFO WHERE id='$id' ORDER BY orden ");
+        $query = $this->db->query(" SELECT id,titulo,descripcion,orden FROM TB_WEB_INFO WHERE id='$id' ");
         return $query->result(); 
     }
     
@@ -873,7 +873,7 @@ class DataModel extends CI_Model
     }
     
     public function contactoWeb($id){
-        $query = $this->db->query(" SELECT numero,mail,facebook FROM TB_WEB_CONTACTO WHERE id='$id' ");
+        $query = $this->db->query(" SELECT numero,mail,facebook,instagram FROM TB_WEB_CONTACTO WHERE id='$id' ");
         return $query->result(); 
     }
     

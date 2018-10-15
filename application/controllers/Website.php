@@ -46,7 +46,7 @@ class Website extends CI_Controller{
         $this->load->view('index',$data);
      }
      
-     public function buscaInfoWeb($id){
+     public function buscaInfoWeb(){
      $this->load->model('DataModel');
         $id = $this->input->post('id');
         $token =$this->input->post('token');
@@ -79,7 +79,7 @@ class Website extends CI_Controller{
             //permiso
             $permiso=$this->DataModel->veryfyPermission($cargo,$this->controlador);
             if($permiso != 0){
-                $info=$this->input->post('infoWebId');
+                $info=$this->input->post('idEntrada');
                 $datos=array(
                     'titulo' => $this->input->post('titulo'),
                     'descripcion' => $this->input->post('descripcion'),
@@ -130,7 +130,8 @@ class Website extends CI_Controller{
                 $datos=array(
                     'numero' => $this->input->post('numero'),
                     'mail' => $this->input->post('mail'),
-                    'facebook  ' =>  $this->input->post('facebook')
+                    'facebook  ' =>  $this->input->post('facebook'),
+                    'instagram  ' =>  $this->input->post('instagram')
                 );
                 $data['datos']=$this->DataModel->updateContactoWeb($id,$datos);
             }else{
